@@ -1,7 +1,7 @@
 <?php 
     session_start();
 
-    if ($_POST["restart"]) {
+    if ($_POST["restart"] || !$_POST["guess"] && !$_POST["word"]) {
         session_unset();
         session_destroy();
         header("Location: index.php");
@@ -26,6 +26,8 @@
             $letters = sizeof($word);
             $_SESSION['letters'] = $letters;
             $_SESSION['turn'] = 1;
+            print("<p>Letters to be guessed: ".$letters."</p>");
+            print("<img src='img/1.png' alt='hangman' />"); 
         }
         else {
             $word = $_SESSION['word'];
@@ -37,10 +39,22 @@
             }
             else {
                 $guesses = [];
-            };        
+            };
             if ($turn < 5) {
                 if (in_array($guess, $guesses)) {
-                    echo "<h2>You've already guessed that letter!</h2>";                    
+                    echo "<h2>You've already guessed that letter!</h2>";
+                    if ($_SESSION['incorrect']) {
+                        $incorrect = $_SESSION['incorrect'];
+                    }
+                    else {
+                        $incorrect = 5;
+                    };
+                    $letters = $_SESSION['letters'] - $right;
+                    $_SESSION['letters'] = $letters;
+                    print("<p>Letters to be guessed: ".$letters."</p>");
+                    print("<p>Letters guessed: ".implode(" ", $guesses));
+                    $_SESSION['incorrect'] = $incorrect;
+                    print("<p>Incorrect guesses left: ".$incorrect)."</p>";
                 }
                 else {
                     array_push($guesses, $guess);
@@ -49,11 +63,25 @@
                         if (in_array($guess, $word)) {
                             echo "<h2>You got it right</h2>";
                             $right = $right + 1;
+                            if ($_SESSION['incorrect']) {
+                                $incorrect = $_SESSION['incorrect'];
+                            }
+                            else {
+                                $incorrect = 5;
+                            };
                         }
                         else {
                             echo "<h2>You got it wrong</h2>";
                             $_SESSION['turn'] = $turn + 1;
+                            $turn = $_SESSION['turn'];
+                            $incorrect = 5 - $turn;
                         };
+                        $letters = $_SESSION['letters'] - $right;
+                        $_SESSION['letters'] = $letters;
+                        print("<p>Letters to be guessed: ".$letters."</p>");
+                        print("<p>Letters guessed: ".implode(" ", $guesses));
+                        $_SESSION['incorrect'] = $incorrect;
+                        print("<p>Incorrect guesses left: ".$incorrect)."</p>";
                     }
                     else {
                         echo "<h2>Game won!</h2>";
@@ -66,18 +94,11 @@
                 echo "<h2>Game over!</h2>";
                 session_unset();
                 session_destroy();
+                $turn = 6;
+            };
+            if ($turn != 0) {
+                print("<img src='img/".$turn.".png' alt='hangman' />"); 
             }
-        }
-        $letters = $_SESSION['letters'] - $right;
-        $_SESSION['letters'] = $letters;
-        $incorrect = 5;
-        print("<p>Letters to be guessed: ".$letters."</p>");
-        if ($guesses) {
-            print("<p>Letters guessed: ".implode(" ", $guesses));
-            if (!array_diff($word, $guesses)) {
-                $incorrect = 5 - $turn;
-            }
-            print("<p>Incorrect guesses left: ".$incorrect);
         }
     ?>
     <form method='POST' action=''>
