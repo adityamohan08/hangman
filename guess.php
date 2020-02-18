@@ -2,7 +2,7 @@
     //Start Session
     session_start();
     //If game restarted or accessed directly
-    if ($_POST["restart"] || !$_POST["guess"] && !$_POST["word"]) {
+    if (!$_SESSION['word'] && !$_POST["word"] || $_POST["restart"] || !$_POST["guess"] && !$_POST["word"]) {
         //Remove Session for data sanitization
         session_unset();
         session_destroy();
@@ -32,13 +32,15 @@
             $_SESSION['letters'] = sizeof($_SESSION['word']);
             //Set the game in motion
             $_SESSION['turn'] = 1;
-            //Print Letters to be guessed and hangman image
+            //Print Letters to be guessed
             print("<p>Letters to be guessed: ".$_SESSION['letters']."</p>");
+            //Print word to be guesses
             echo "<p>Word to be guessed: ";
             foreach ($_SESSION['original_word'] as $i){
                 echo "- ";
             }
             echo "</p>";
+            //Print hangman image
             print("<img src='img/1.png' alt='hangman' />");
         }
         //If guess has been made
@@ -53,6 +55,7 @@
                 print("<p>Incorrect guesses left: ".$incorrect)."</p>";
                 //Update Incorrect Session Variable
                 $_SESSION['incorrect'] = $incorrect;
+                //Print word to be guessed
                 echo "<p>Word to be guessed: ";
                 foreach ($_SESSION['original_word'] as $i){
                     if (in_array($i, $guesses)) {
@@ -80,7 +83,7 @@
                 $guesses = [];
             };
             // If game isn't over
-            if ($turn < 5) {
+            if ($turn < 6) {
                 //If already guessed
                 if (in_array($guess, $guesses)) {
                     echo "<h2>You've already guessed that letter!</h2>";
@@ -126,6 +129,7 @@
                     //Game won and destroy session
                     else {
                         echo "<h2>Game won!</h2>";
+                        echo "<p>Word: ".join( "", $_SESSION['original_word'])."</p>";
                         session_unset();
                         session_destroy();
                     }
