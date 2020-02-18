@@ -84,8 +84,15 @@
             };
             // If game isn't over
             if ($turn < 6) {
+                //If last turn and guess isn't right
+                if ($turn == 5 && !array_diff($word, $guesses)) {
+                    echo "<h2>Game over!</h2>";
+                    session_unset();
+                    session_destroy();
+                    $turn = 6;
+                }
                 //If already guessed
-                if (in_array($guess, $guesses)) {
+                else if (in_array($guess, $guesses)) {
                     echo "<h2>You've already guessed that letter!</h2>";
                     //If Incorrect Session exists
                     if ($_SESSION['incorrect']) {
@@ -135,13 +142,6 @@
                     }
                 }
             }
-            //Game lost and destroy session
-            else {
-                echo "<h2>Game over!</h2>";
-                session_unset();
-                session_destroy();
-                $turn = 6;
-            };
             //Print the hangman image
             print("<img src='img/".$turn.".png' alt='hangman' />");
         }
