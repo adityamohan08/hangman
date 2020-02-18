@@ -24,15 +24,22 @@
     <?php
         //If word has just been entered on homepage
         if ($_POST["word"]) {
-            //Create Word Session variable with lowercase array of word
+            //Create Word Session Variable with lowercase array of word
             $_SESSION['word'] = array_unique(str_split(strtolower($_POST["word"])));
+            //Create Word Session Variable with duplicates
+            $_SESSION['original_word'] = str_split(strtolower($_POST["word"]));
             //Create Letters Session Variable with array length
             $_SESSION['letters'] = sizeof($_SESSION['word']);
             //Set the game in motion
             $_SESSION['turn'] = 1;
             //Print Letters to be guessed and hangman image
             print("<p>Letters to be guessed: ".$_SESSION['letters']."</p>");
-            print("<img src='img/1.png' alt='hangman' />"); 
+            echo "<p>Word to be guessed: ";
+            foreach ($_SESSION['original_word'] as $i){
+                echo "- ";
+            }
+            echo "</p>";
+            print("<img src='img/1.png' alt='hangman' />");
         }
         //If guess has been made
         else {
@@ -46,6 +53,16 @@
                 print("<p>Incorrect guesses left: ".$incorrect)."</p>";
                 //Update Incorrect Session Variable
                 $_SESSION['incorrect'] = $incorrect;
+                echo "<p>Word to be guessed: ";
+                foreach ($_SESSION['original_word'] as $i){
+                    if (in_array($i, $guesses)) {
+                        echo $i." ";
+                    }
+                    else {
+                        echo "- ";
+                    }
+                }
+                echo "</p>";
             };
             //Get session variables
             $word = $_SESSION['word'];
