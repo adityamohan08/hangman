@@ -10,6 +10,6 @@
 
 ## To Do
 
-[ ] Make OOP
-[*] Add dashes for the word to be guessed and fill in as player 2 guesses
-[ ] Make alphabetical keyboard for players to guess and cross them off as they are guessed
+- [ ] Make OOP
+- [x] Add dashes for the word to be guessed and fill in as player 2 guesses
+- [ ] Make alphabetical keyboard for players to guess and cross them off as they are guessed
